@@ -11,4 +11,4 @@ Bu proje, Türkiye için erken deprem uyarı sistemi geliştirmeyi amaçlar. Pro
 ## Kurulum ve Çalıştırma
 1. Depoyu klonlayın:
    ```bash
-   git clone https://github.com/helinerdemir/ErkenDepremUyar-.git
+   git clone https://github.com/helinerdemir/EarlyEarthquakeWarning.git
