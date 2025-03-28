@@ -1,6 +1,10 @@
 package com.earthquake.simulation;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.earthquake.model.Earthquake;
+import com.earthquake.model.EarthquakeStatus;
+import com.earthquake.service.EarthquakeService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -8,14 +12,16 @@ import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class StationSimulator {
     
-    @Autowired
-    private EarthquakeService earthquakeService;
+    private final EarthquakeService earthquakeService;
+    private final Random random = new Random();
     
     @Scheduled(fixedRate = 60000) // Her dakika çalışır
     public void simulateSeismicActivity() {
-        Random random = new Random();
+        log.info("Simulating seismic activity...");
         
         // Türkiye sınırları içinde rastgele koordinat
         double lat = 36 + (42 - 36) * random.nextDouble();
@@ -25,15 +31,21 @@ public class StationSimulator {
         double magnitude = 3.0 + (4.0 * random.nextDouble());
         
         if (magnitude > 4.0) { // Sadece 4+ depremleri kaydet
-            Earthquake earthquake = new Earthquake();
-            earthquake.setMagnitude(magnitude);
-            earthquake.setLatitude(lat);
-            earthquake.setLongitude(lon);
-            earthquake.setDepth(10.0 + (random.nextDouble() * 20));
-            earthquake.setOccurrenceTime(LocalDateTime.now());
-            earthquake.setStatus("DETECTED");
-            
-            earthquakeService.save(earthquake);
+            try {
+                Earthquake earthquake = new Earthquake();
+                earthquake.setMagnitude(magnitude);
+                earthquake.setLatitude(lat);
+                earthquake.setLongitude(lon);
+                earthquake.setDepth(10.0 + (random.nextDouble() * 20));
+                earthquake.setOccurrenceTime(LocalDateTime.now());
+                earthquake.setStatus(EarthquakeStatus.DETECTED);
+                earthquake.setLocation(String.format("Lat: %.4f, Lon: %.4f", lat, lon));
+                
+                earthquakeService.save(earthquake);
+                log.info("Simulated earthquake detected: Magnitude {}. Location: {}", magnitude, earthquake.getLocation());
+            } catch (Exception e) {
+                log.error("Error simulating earthquake: {}", e.getMessage());
+            }
         }
     }
 } 
