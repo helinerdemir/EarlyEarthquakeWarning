@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/test_db
+    username: test_user
+    password: test_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+application:
+  security:
+    jwt:
+      secret-key: test_secret_key_12345678901234567890123456789012
+      expiration: 86400000
+      refresh-token:
+        expiration: 604800000
+
+server:
+  port: 8081 
